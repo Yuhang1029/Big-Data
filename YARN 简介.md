@@ -4,6 +4,10 @@
 
 [Yarn快速入门系列(1)——基本架构与三大组件介绍-云社区-华为云](https://bbs.huaweicloud.com/blogs/302284)
 
+[Apache Hadoop 3.3.4  - Apache Hadoop YARN](https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/YARN.html)
+
+[深入浅出 Hadoop YARN](https://zhuanlan.zhihu.com/p/54192454)
+
 ---
 
 ## 什么是 YARN
