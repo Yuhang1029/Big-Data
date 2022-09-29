@@ -45,7 +45,32 @@ print(rdd2.collect())
 针对 K-V 型 RDD，自动按照 Key 分组，然后根据你提供的聚合逻辑，完成组内数据 (value) 的聚合操作。
 
 ```python
-rdd = sc.parallelize(["hadoop spark spark", "flink flink"])
+rdd = sc.parallelize([('a', 1), ('b', 1), ('a', 2), ('a', 1)])
+print(rdd.reduceByKey(lambda a, b : a + b).collect())
+```
+
+### mapValues
+
+针对二元元组的 RDD，对其内部的二元元组 Value 进行 map 操作。它和 map 基本一致，只是写法更加简便。
+
+```python
+rdd = sc.parallelize([('a', 1), ('b', 1), ('a', 2), ('a', 1)])
+# 使用 map
+rdd.map(lambda x : (x[0], x[1] * 10))
+# 使用 mapValues
+rdd.mapValues(lambda x : x * 10)
+```
+
+### groupBy
+
+将 RDD 的数据进行分组
+
+```python
+rdd = sc.parallelize([('a', 1), ('b', 1), ('a', 2), ('a', 1)])
+# 通过 groupBy 进行分组
+# groupBy 传入函数的意思是通过这个确定按照谁来分组
+result = rdd.groupBy(lambda t : t[0])
+print(result.collect())
 ```
 
 
