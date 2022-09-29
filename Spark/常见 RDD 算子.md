@@ -183,5 +183,80 @@ print(rdd.sortBy(lambda x : x[0], ascending=False, numPartition=1).collect())
 针对 K-V 型数据，按照 Key 进行排序。sortByKey 可以传入一个函数在排序前对 Key 进行预处理。
 
 ```python
-rdd = sc.parallelize([('', 1), ('b', 1), ('a', 2), ('a', 3), ('b', 3)])
+rdd = sc.parallelize([('A', 1), ('b', 1), ('a', 2), ('a', 3), ('b', 3)])
+# 忽略大小写排序
+# [('A', 1), ('a', 2), ('a', 3), ('b', 1), ('b', 3)]
+rdd2 = rdd.sortByKey(ascending=True, numPartitions=1, keyfunc=lambda k : str(k).lower())
+print(rdd2.collect())
+```
+
+&emsp;
+
+## Action 算子
+
+### countByKey
+
+统计 Key 出现的次数，适用于 K-V 型 RDD。
+
+```python
+rdd = sc.textFile("../words.txt")
+rdd2 = rdd.flatMap(lambda x : x.split(' ')).map(lambda x : (x, 1))
+result = rdd2.countByKey()
+# 输出一个 Python 的类 Dict
+print(result)
+```
+
+### collect
+
+将 RDD 各个分区内的数据，统一收集到 Driver 中，形成一个 List 对象。注意使用前需要自己确认结果数据集不会很大。
+
+### reduce
+
+对 RDD 数据按照你传入的逻辑进行聚合，得到最终的结果。
+
+```python
+rdd = sc.parallelize([0, 1, 2, 3, 4])
+print(rdd.reduce(lambda a, b : a + b))
+```
+
+### first / take
+
+取出 RDD 的第一个元素 / 取出前n个元素组成 List。
+
+```python
+# 1
+print(sc.parallelize([3, 2, 1]).first())
+# [3, 2, 1]
+print(sc.parallelize([3, 2, 1, 0, 3]).take(3))
+```
+
+### top
+
+对 RDD 数据进行降序排序，取出前n个。
+
+```python
+# [8, 5]
+print(sc.parallelize([0, 5, 8, 3, 2, 1]).top(2))
+```
+
+### count
+
+返回 RDD 中有几条数据。
+
+### takeSample
+
+随机抽样 RDD 数据
+
+```python
+rdd = sc.parallelize([3, 2, 1, 5, 7, 2, 1, 1, 5])
+# 第一个变量代表是否允许抽取相同位置的数据
+print(rdd.takeSample.(False, 4))
+```
+
+### takeOrdered
+
+对 RDD 排序并且取出前n个，可以正向排序或逆向排序。
+
+```python
+
 ```
