@@ -63,7 +63,7 @@ rdd.mapValues(lambda x : x * 10)
 
 ### groupBy
 
-将 RDD 的数据进行分组
+将 RDD 的数据进行分组。
 
 ```python
 rdd = sc.parallelize([('a', 1), ('b', 1), ('a', 2), ('a', 1)])
@@ -73,4 +73,115 @@ result = rdd.groupBy(lambda t : t[0])
 print(result.collect())
 ```
 
+### groupByKey
 
+针对 K-V 型数据，自动按照 Key 来分组。
+
+```python
+rdd = sc.parallelize([('a', 1), ('b', 1), ('a', 2), ('a', 1)])
+rdd2 = rdd.groupByKey()
+# [('a', [1, 2, 1]), ('b', [1])]
+print(rdd2.map(lambda x : (x[0], list(x[i]))).collect())
+```
+
+### filter
+
+过滤想要的数据进行保留，传入一个单入参的函数，返回值是布尔型。
+
+```python
+rdd = sc.parallelize([0, 1, 2, 3, 4, 5])
+# 通过 filter 过滤奇数
+result = rdd.filter(lambda x : x % 2 == 1)
+print(result.collect())
+```
+
+### distinct
+
+对 RDD 数据去重，返回新的 RDD。
+
+```python
+rdd = sc.parallelize([0, 1, 1, 1, 2, 2, 3])
+print(rdd.distinct().collect())
+```
+
+### union
+
+把两个 RDD 合并成一个 RDD，RDD 类型不同也是可以合并的。
+
+```python
+rdd1 = sc.parallelize([0, 1, 1, 3])
+rdd2 = sc.parallelize(['a', 'b', 'c'])
+rdd3 = rdd1.union(rdd2)
+# 输出 [0, 1, 1, 3, 'a', 'b', 'c']
+print(rdd3.collect())
+```
+
+### join
+
+对两个 RDD 执行 join 操作（可实现 SQL 的内/外连接），join 算子只能用于二元元组。
+
+```python
+rdd1 = sc.parallelize([('Jim', 1001), ('Tom', 1002), ('Bob', 1003)])
+rdd2 = sc.parallelize([(1001, 'Department_1'), (1002, 'Department_2')])
+# 通过 join 来进行数据关联
+# 对于 join 算子来说，关联条件按照二元元组的key来进行关联
+# [(1001, ('Jim', 'Department_1')), (1002, ('Tom', 'Department_2'))]
+print(rdd1.join(rdd2).collect())
+
+# 左外连接
+# [(1001, ('Jim', 'Department_1')), (1002, ('Tom', 'Department_2')), (1003, ('Tom', None))]
+print(rdd1.leftOuterJoin(rdd2).collect())
+```
+
+### intersection
+
+求两个 RDD 的交集，返回一个新的 RDD。
+
+```python
+rdd1 = sc.parallelize([('a', 1), ('a', 3)])
+rdd2 = sc.parallelize([('a', 1), ('b', 3)])
+rdd3 = rdd1.intersection(rdd2)
+# 输出 [('a', 1)]
+print(rdd3.collect())
+```
+
+### glom
+
+将 RDD 的数据加上嵌套，这个嵌套按照分区进行。
+
+```python
+# 两个分区 [[0, 1], [1, 3]]
+rdd1 = sc.parallelize([0, 1, 1, 3], 2)
+print(rdd1.glom().collect())
+
+# 三个分区 [[0, 1], [1, 3], [4, 6]]
+rdd2 = sc.parallelize([0, 1, 1, 3, 4, 6], 3)
+print(rdd2.glom().collect())
+
+# 如果希望解嵌套可以利用 flatMap 同时传入一个空的实现方法
+# 打印结果就是 [0, 1, 1, 3, 4, 6]
+print(rdd2.glom().flatMap(lambda x: x).collect())
+```
+
+### sortBy
+
+对 RDD 数据进行排序，基于你指定的排序依据。
+
+```python
+rdd = sc.parallelize([('a', 1), ('b', 1), ('a', 2), ('a', 3), ('b', 3)])
+# 按照 Value 数字进行排序，参数二表示升序降序，默认升序
+# [('a', 1), ('b', 1), ('a', 2), ('a', 3), ('b', 3)]
+print(rdd.sortBy(lambda x : x[1], ascending=True, numPartition=1).collect())
+
+# 按照 Key 字母进行排序
+# [('', 1), ('b', 1), ('a', 2), ('a', 3), ('b', 3)]
+print(rdd.sortBy(lambda x : x[0], ascending=False, numPartition=1).collect())    
+```
+
+### sortByKey
+
+针对 K-V 型数据，按照 Key 进行排序。sortByKey 可以传入一个函数在排序前对 Key 进行预处理。
+
+```python
+rdd = sc.parallelize([('', 1), ('b', 1), ('a', 2), ('a', 3), ('b', 3)])
+```

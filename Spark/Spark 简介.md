@@ -116,7 +116,7 @@ rdd = sc.textFile("~/Desktop/1.txt", 5)
 
 分布式集合对象上的 API 称为算子，可以通过一系列的算子对 RDD 进行操作，主要分 Transformation 和 Action 两种。
 
-- Transformation (转换)：是对已有的 RDD 进行换行生成新的 RDD，对于转换过程采用惰性计算机制，如果没有 Action 算子，不会立即计算出结果。常用的方法有 map，filter，flatmap 等。
+- Transformation (转换)：是对已有的 RDD 进行换行生成新的 RDD，对于转换过程采用惰性计算机制，如果没有 Action 算子，不会立即计算出结果。常用的方法有 map，filter，flatMap 等。
 
 - Action (执行)：对已有对 RDD 对数据执行计算产生结果，并将结果返回 Driver 或者写入到外部存储中，返回值不再是 RDD。常用到方法有 reduce，collect，saveAsTextFile 等。
 
