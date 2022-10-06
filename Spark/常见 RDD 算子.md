@@ -25,7 +25,7 @@ rdd.map(lambda data : data * 10)
 
 ### flatMap
 
-对 RDD 执行 map 操作，然后进行解除嵌套操作，即多维数组转成一维。
+对 RDD 执行 map 操作，然后进行解除嵌套操作，即多维数组转成一维数组。
 
 ```python
 rdd = sc.parallelize(["hadoop spark spark", "flink flink"])
